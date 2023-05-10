@@ -3,59 +3,66 @@
 
 generator client {
     provider = "prisma-client-js"
-    previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
-    provider = "sqlite"
-    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    url      = env("DATABASE_URL")
-}
-
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
 // Necessary for Next auth
 model Account {
-    id                String  @id @default(cuid())
-    userId            String
+    id                String   @id @default(cuid())
     type              String
+    createdAt         DateTime @default(now())
+    updatedAt         DateTime @updatedAt
     provider          String
     providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
+    refresh_token     String?  @db.Text
+    access_token      String?  @db.Text
     expires_at        Int?
     token_type        String?
     scope             String?
-    id_token          String? // @db.Text
+    id_token          String?  @db.Text
     session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId            String
 
     @@unique([provider, providerAccountId])
+    @@index([userId])
 }
 
 model Session {
     id           String   @id @default(cuid())
     sessionToken String   @unique
-    userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId       String
+
+    @@index([userId])
+}
+
+enum Role {
+    ADMIN
+    USER
+    RESTRICTED
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    id              String          @id @default(cuid())
+    name            String?
+    createdAt       DateTime        @default(now())
+    updatedAt       DateTime        @updatedAt
+    email           String?         @unique
+    emailVerified   DateTime?
+    image           String?
+    role            Role            @default(USER)
+    accounts        Account[]
+    sessions        Session[]
+    Tasks           Task[]
+    CompletedTasks  CompletedTask[]
+    streakStartDate DateTime?
 }
 
 model VerificationToken {
@@ -64,4 +71,30 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+// Task Models
+model Task {
+    id               String          @id @default(cuid())
+    title            String
+    amountToComplete Int?            @default(1)
+    owner            User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+    ownerId          String
+    CompletedTasks   CompletedTask[]
+
+    @@index([ownerId])
+}
+
+model CompletedTask {
+    id               String   @id @default(cuid())
+    amountToComplete Int?     @default(1)
+    comment          String?
+    date             DateTime
+    task             Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+    taskId           String
+    owner            User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+    ownerId          String
+
+    @@index([taskId])
+    @@index([ownerId])
 }
