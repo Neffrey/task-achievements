@@ -1,8 +1,9 @@
 import { type GetServerSidePropsContext } from "next";
 import {
-  getServerSession,
   type NextAuthOptions,
   type DefaultSession,
+  type DefaultUser,
+  getServerSession,
 } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
@@ -19,15 +20,13 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: UserRole;
+      role?: string | null;
     } & DefaultSession["user"];
   }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+  interface User extends DefaultUser {
+    role?: string | null;
+  }
 }
 
 /**
