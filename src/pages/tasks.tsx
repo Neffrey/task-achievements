@@ -8,7 +8,7 @@ import { api } from "~/utils/api";
 
 // COMPONENTS
 import IfUser from "~/components/helpers/ifUser";
-import TasksAuthed from "~/components/page-templates/tasksAuthed/tasksAuthed";
+import TasksAuthed from "~/components/page-templates/tasksAuthed";
 import PageUnauthed from "~/components/page-templates/pageUnauthed";
 import { LoadingPage } from "~/components/templates/loading";
 
