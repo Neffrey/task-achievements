@@ -77,12 +77,21 @@ model VerificationToken {
 model Task {
     id               String          @id @default(cuid())
     title            String
-    amountToComplete Int?            @default(1)
+    timesToComplete Int?            @default(1)
+    comment          String?
+    timeframe        TaskTimeframe?  @default(DAY)
     owner            User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
     ownerId          String
     CompletedTasks   CompletedTask[]
 
     @@index([ownerId])
+}
+
+enum TaskTimeframe {
+    DAY
+    WEEK
+    FORTNIGHT
+    MONTH
 }
 
 model CompletedTask {
