@@ -3,7 +3,7 @@ import { type UserProps } from "~/pages/account";
 
 // COMPONENTS
 import AccountDetails from "~/components/page-templates/account-page/accountDetails";
-import NameChangeFormModal from "~/components/forms/nameChangeForm/nameChangeFormModal";
+import NameChangeFormModal from "~/components/forms/nameChangeFormModal";
 
 const AccountAuthed = ({ user }: UserProps) => {
   // RETURN

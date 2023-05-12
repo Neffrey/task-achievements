@@ -27,7 +27,7 @@ const NAME_MIN_LENGTH = 3;
 const NAME_MAX_LENGTH = 30;
 
 // SCHEMA
-export const schema = {
+export const nameChangeSchema = {
   name: z
     .string()
     .min(NAME_MIN_LENGTH, {
@@ -39,7 +39,7 @@ export const schema = {
 };
 
 // TYPES
-type SchemaKey = Extract<keyof typeof schema, string>;
+type SchemaKey = Extract<keyof typeof nameChangeSchema, string>;
 
 /*************************
  *** COMPONENT
@@ -83,7 +83,7 @@ const NameChangeForm = ({ user }: UserProps) => {
   // Handle Field Validation
   const validateField = (field: SchemaKey, value: string) => {
     clearErrors(field);
-    const result = schema[field].safeParse(value);
+    const result = nameChangeSchema[field].safeParse(value);
     if (!result.success) {
       setError(field, { message: result.error.formErrors.formErrors[0] });
     }
